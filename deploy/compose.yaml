@@ -1,0 +1,21 @@
+services:
+  simple-to-buy-api:
+    build: .
+    env_file:
+      - path: ./.env
+        required: false # default
+      - path: ./override.env
+        required: false
+    volumes:
+      - misc_data:/code/data
+  simple-to-buy-db:
+    image: postgres:14.5
+    env_file:
+      - path: ./.env
+        required: false # default
+      - path: ./override.env
+        required: false
+    volumes:
+      - db_data:/var/lib/postgresql/data
+volumes:
+  misc_data:
