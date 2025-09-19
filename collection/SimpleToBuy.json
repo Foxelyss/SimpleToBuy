@@ -1,0 +1,670 @@
+{
+  "name": "SimpleToBuy",
+  "version": "1",
+  "items": [
+    {
+      "type": "http",
+      "name": "Health check",
+      "filename": "Health check.bru",
+      "seq": 4,
+      "settings": {
+        "encodeUrl": true
+      },
+      "tags": [],
+      "request": {
+        "url": "{{host}}/api/health",
+        "method": "GET",
+        "headers": [],
+        "params": [],
+        "body": {
+          "mode": "none",
+          "formUrlEncoded": [],
+          "multipartForm": [],
+          "file": []
+        },
+        "script": {},
+        "vars": {},
+        "assertions": [
+          {
+            "name": "res.body.status",
+            "value": "eq healthy",
+            "enabled": true,
+            "uid": "iPVGaMbpCy9oX0nu24MbJ"
+          }
+        ],
+        "tests": "",
+        "docs": "",
+        "auth": {
+          "mode": "inherit"
+        }
+      }
+    },
+    {
+      "type": "folder",
+      "name": "Module 1",
+      "filename": "Module 1",
+      "seq": 2,
+      "root": {
+        "request": {
+          "auth": {
+            "mode": "inherit"
+          }
+        },
+        "meta": {
+          "name": "Module 1",
+          "seq": 2
+        }
+      },
+      "items": [
+        {
+          "type": "http",
+          "name": "List products",
+          "filename": "List products.bru",
+          "seq": 3,
+          "settings": {
+            "encodeUrl": true
+          },
+          "tags": [],
+          "request": {
+            "url": "{{host}}/products",
+            "method": "GET",
+            "headers": [],
+            "params": [],
+            "body": {
+              "mode": "none",
+              "formUrlEncoded": [],
+              "multipartForm": [],
+              "file": []
+            },
+            "script": {},
+            "vars": {},
+            "assertions": [],
+            "tests": "",
+            "docs": "",
+            "auth": {
+              "mode": "inherit"
+            }
+          }
+        },
+        {
+          "type": "http",
+          "name": "Login as Admin",
+          "filename": "Login as Admin.bru",
+          "seq": 5,
+          "settings": {
+            "encodeUrl": true
+          },
+          "tags": [],
+          "request": {
+            "url": "{{host}}/login",
+            "method": "POST",
+            "headers": [],
+            "params": [],
+            "body": {
+              "mode": "json",
+              "json": "{\n  \"email\": \"admin@shop.ru\",\n  \"password\": \"QWEasd123\"\n}",
+              "formUrlEncoded": [],
+              "multipartForm": [
+                {
+                  "type": "text",
+                  "name": "username",
+                  "value": "admin@shop.ru",
+                  "enabled": true
+                },
+                {
+                  "type": "text",
+                  "name": "password",
+                  "value": "QWEasd123",
+                  "enabled": true
+                }
+              ],
+              "file": []
+            },
+            "script": {
+              "res": "bru.setVar(\"access_token\",res.body.access_token)"
+            },
+            "vars": {},
+            "assertions": [],
+            "tests": "",
+            "docs": "",
+            "auth": {
+              "mode": "none"
+            }
+          }
+        },
+        {
+          "type": "http",
+          "name": "Login as Regular",
+          "filename": "Login as Regular.bru",
+          "seq": 4,
+          "settings": {
+            "encodeUrl": true
+          },
+          "tags": [],
+          "request": {
+            "url": "{{host}}/login",
+            "method": "POST",
+            "headers": [],
+            "params": [],
+            "body": {
+              "mode": "json",
+              "json": "{\n  \"email\": \"user@shop.ru\",\n  \"password\": \"password\"\n}",
+              "formUrlEncoded": [],
+              "multipartForm": [
+                {
+                  "type": "text",
+                  "name": "username",
+                  "value": "admin@shop.ru",
+                  "enabled": true
+                },
+                {
+                  "type": "text",
+                  "name": "password",
+                  "value": "QWEasd123",
+                  "enabled": true
+                }
+              ],
+              "file": []
+            },
+            "script": {
+              "res": "bru.setVar(\"access_token\",res.body.access_token)"
+            },
+            "vars": {},
+            "assertions": [],
+            "tests": "",
+            "docs": "",
+            "auth": {
+              "mode": "none"
+            }
+          }
+        },
+        {
+          "type": "http",
+          "name": "Logout",
+          "filename": "Logout.bru",
+          "seq": 1,
+          "settings": {
+            "encodeUrl": true
+          },
+          "tags": [],
+          "request": {
+            "url": "{{host}}/logout",
+            "method": "POST",
+            "headers": [],
+            "params": [],
+            "body": {
+              "mode": "none",
+              "formUrlEncoded": [],
+              "multipartForm": [],
+              "file": []
+            },
+            "script": {},
+            "vars": {},
+            "assertions": [],
+            "tests": "",
+            "docs": "",
+            "auth": {
+              "mode": "bearer",
+              "bearer": {
+                "token": "{{access_token}}"
+              }
+            }
+          }
+        },
+        {
+          "type": "http",
+          "name": "See profile",
+          "filename": "See profile.bru",
+          "seq": 6,
+          "settings": {
+            "encodeUrl": true
+          },
+          "tags": [],
+          "request": {
+            "url": "{{host}}/profile",
+            "method": "GET",
+            "headers": [],
+            "params": [],
+            "body": {
+              "mode": "none",
+              "formUrlEncoded": [],
+              "multipartForm": [],
+              "file": []
+            },
+            "script": {},
+            "vars": {},
+            "assertions": [],
+            "tests": "",
+            "docs": "",
+            "auth": {
+              "mode": "bearer",
+              "bearer": {
+                "token": "{{access_token}}"
+              }
+            }
+          }
+        },
+        {
+          "type": "http",
+          "name": "Signup",
+          "filename": "Signup.bru",
+          "seq": 2,
+          "settings": {
+            "encodeUrl": true
+          },
+          "tags": [],
+          "request": {
+            "url": "{{host}}/signup",
+            "method": "POST",
+            "headers": [],
+            "params": [],
+            "body": {
+              "mode": "json",
+              "json": "{\n\"fio\": \"Иванов Иван Иванович\",\n\"email\": \"admin@admin.ru\",\n\"password\": \"admin\"\n}",
+              "formUrlEncoded": [],
+              "multipartForm": [],
+              "file": []
+            },
+            "script": {},
+            "vars": {},
+            "assertions": [],
+            "tests": "",
+            "docs": "",
+            "auth": {
+              "mode": "inherit"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "folder",
+      "name": "Module 2",
+      "filename": "Module 2",
+      "seq": 2,
+      "root": {
+        "request": {
+          "auth": {
+            "mode": "inherit"
+          }
+        },
+        "meta": {
+          "name": "Module 2",
+          "seq": 2
+        }
+      },
+      "items": [
+        {
+          "type": "http",
+          "name": "Add to cart",
+          "filename": "Add to cart.bru",
+          "seq": 1,
+          "settings": {
+            "encodeUrl": true
+          },
+          "tags": [],
+          "request": {
+            "url": "{{host}}/cart/:product_id",
+            "method": "POST",
+            "headers": [],
+            "params": [
+              {
+                "name": "product_id",
+                "value": "1",
+                "type": "path",
+                "enabled": true
+              }
+            ],
+            "body": {
+              "mode": "none",
+              "formUrlEncoded": [],
+              "multipartForm": [],
+              "file": []
+            },
+            "script": {},
+            "vars": {},
+            "assertions": [],
+            "tests": "",
+            "docs": "",
+            "auth": {
+              "mode": "bearer",
+              "bearer": {
+                "token": "{{access_token}}"
+              }
+            }
+          }
+        },
+        {
+          "type": "http",
+          "name": "Get cart items",
+          "filename": "Get cart items.bru",
+          "seq": 2,
+          "settings": {
+            "encodeUrl": true
+          },
+          "tags": [],
+          "request": {
+            "url": "{{host}}/cart",
+            "method": "GET",
+            "headers": [],
+            "params": [],
+            "body": {
+              "mode": "none",
+              "formUrlEncoded": [],
+              "multipartForm": [],
+              "file": []
+            },
+            "script": {},
+            "vars": {},
+            "assertions": [],
+            "tests": "",
+            "docs": "",
+            "auth": {
+              "mode": "bearer",
+              "bearer": {
+                "token": "{{access_token}}"
+              }
+            }
+          }
+        },
+        {
+          "type": "http",
+          "name": "Order cart",
+          "filename": "Order cart.bru",
+          "seq": 4,
+          "settings": {
+            "encodeUrl": true
+          },
+          "tags": [],
+          "request": {
+            "url": "{{host}}/order",
+            "method": "POST",
+            "headers": [],
+            "params": [],
+            "body": {
+              "mode": "none",
+              "formUrlEncoded": [],
+              "multipartForm": [],
+              "file": []
+            },
+            "script": {},
+            "vars": {},
+            "assertions": [],
+            "tests": "",
+            "docs": "",
+            "auth": {
+              "mode": "inherit"
+            }
+          }
+        },
+        {
+          "type": "http",
+          "name": "Order history",
+          "filename": "Order history.bru",
+          "seq": 6,
+          "settings": {
+            "encodeUrl": true
+          },
+          "tags": [],
+          "request": {
+            "url": "{{host}}/order",
+            "method": "GET",
+            "headers": [],
+            "params": [],
+            "body": {
+              "mode": "none",
+              "formUrlEncoded": [],
+              "multipartForm": [],
+              "file": []
+            },
+            "script": {},
+            "vars": {},
+            "assertions": [],
+            "tests": "",
+            "docs": "",
+            "auth": {
+              "mode": "inherit"
+            }
+          }
+        },
+        {
+          "type": "http",
+          "name": "Redacting profile",
+          "filename": "Redacting profile.bru",
+          "seq": 5,
+          "settings": {
+            "encodeUrl": true
+          },
+          "tags": [],
+          "request": {
+            "url": "{{host}}/profile",
+            "method": "PATCH",
+            "headers": [],
+            "params": [],
+            "body": {
+              "mode": "json",
+              "json": "{\n  \"fio\":\"Asd\"\n}",
+              "formUrlEncoded": [],
+              "multipartForm": [],
+              "file": []
+            },
+            "script": {},
+            "vars": {},
+            "assertions": [],
+            "tests": "",
+            "docs": "",
+            "auth": {
+              "mode": "inherit"
+            }
+          }
+        },
+        {
+          "type": "http",
+          "name": "Remove from cart",
+          "filename": "Remove from cart.bru",
+          "seq": 3,
+          "settings": {
+            "encodeUrl": true
+          },
+          "tags": [],
+          "request": {
+            "url": "{{host}}/cart/:id",
+            "method": "DELETE",
+            "headers": [],
+            "params": [
+              {
+                "name": "id",
+                "value": "1",
+                "type": "path",
+                "enabled": true
+              }
+            ],
+            "body": {
+              "mode": "none",
+              "formUrlEncoded": [],
+              "multipartForm": [],
+              "file": []
+            },
+            "script": {},
+            "vars": {},
+            "assertions": [],
+            "tests": "",
+            "docs": "",
+            "auth": {
+              "mode": "bearer",
+              "bearer": {
+                "token": "{{access_token}}"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "folder",
+      "name": "Module 3",
+      "filename": "Module 3",
+      "seq": 3,
+      "root": {
+        "request": {
+          "auth": {
+            "mode": "inherit"
+          }
+        },
+        "meta": {
+          "name": "Module 3",
+          "seq": 3
+        }
+      },
+      "items": [
+        {
+          "type": "http",
+          "name": "Change product",
+          "filename": "Change product.bru",
+          "seq": 3,
+          "settings": {
+            "encodeUrl": true
+          },
+          "tags": [],
+          "request": {
+            "url": "{{host}}/product/:id",
+            "method": "PATCH",
+            "headers": [],
+            "params": [
+              {
+                "name": "id",
+                "value": "12",
+                "type": "path",
+                "enabled": true
+              }
+            ],
+            "body": {
+              "mode": "none",
+              "formUrlEncoded": [],
+              "multipartForm": [],
+              "file": []
+            },
+            "script": {},
+            "vars": {},
+            "assertions": [],
+            "tests": "",
+            "docs": "",
+            "auth": {
+              "mode": "bearer",
+              "bearer": {
+                "token": "{{access_token}}"
+              }
+            }
+          }
+        },
+        {
+          "type": "http",
+          "name": "New product launch",
+          "filename": "New product launch.bru",
+          "seq": 1,
+          "settings": {
+            "encodeUrl": true
+          },
+          "tags": [],
+          "request": {
+            "url": "{{host}}/product",
+            "method": "POST",
+            "headers": [],
+            "params": [],
+            "body": {
+              "mode": "json",
+              "json": "{\n  \"name\":\"asd\"\n}",
+              "formUrlEncoded": [],
+              "multipartForm": [],
+              "file": []
+            },
+            "script": {},
+            "vars": {},
+            "assertions": [],
+            "tests": "",
+            "docs": "",
+            "auth": {
+              "mode": "bearer",
+              "bearer": {
+                "token": "{{access_token}}"
+              }
+            }
+          }
+        },
+        {
+          "type": "http",
+          "name": "Remove product",
+          "filename": "Remove product.bru",
+          "seq": 2,
+          "settings": {
+            "encodeUrl": true
+          },
+          "tags": [],
+          "request": {
+            "url": "{{host}}/product/:id",
+            "method": "DELETE",
+            "headers": [],
+            "params": [
+              {
+                "name": "id",
+                "value": "12",
+                "type": "path",
+                "enabled": true
+              }
+            ],
+            "body": {
+              "mode": "none",
+              "formUrlEncoded": [],
+              "multipartForm": [],
+              "file": []
+            },
+            "script": {},
+            "vars": {},
+            "assertions": [],
+            "tests": "",
+            "docs": "",
+            "auth": {
+              "mode": "bearer",
+              "bearer": {
+                "token": "{{access_token}}"
+              }
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "environments": [],
+  "root": {
+    "request": {
+      "auth": {
+        "mode": "bearer",
+        "bearer": {
+          "token": "{{access_token}}"
+        }
+      },
+      "vars": {
+        "req": [
+          {
+            "name": "host",
+            "value": "http://127.0.0.1:8000",
+            "enabled": true,
+            "local": false,
+            "uid": "T4We6zBDyudJLkkk9DRaT"
+          }
+        ]
+      }
+    }
+  },
+  "brunoConfig": {
+    "version": "1",
+    "name": "SimpleToBuy",
+    "type": "collection",
+    "ignore": [
+      "node_modules",
+      ".git"
+    ],
+    "size": 0.0036458969116210938,
+    "filesCount": 20
+  }
+}
