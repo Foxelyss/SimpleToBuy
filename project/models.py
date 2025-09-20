@@ -6,10 +6,10 @@ from datetime import datetime
 
 class User(NamedTuple):
     id: int
-    email: str
     name: str
     surname: str
     middle_name: str
+    email: str
     password_hash: str
     creation_date: datetime
     avatar: str = ""

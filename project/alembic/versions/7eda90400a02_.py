@@ -18,8 +18,6 @@ branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 
 def upgrade():
-    # Execute raw SQL statements
-
     op.execute("""create table if not exists users (
         id serial primary key,
         name varchar(255) not null,
@@ -43,38 +41,32 @@ def upgrade():
         id serial primary key,
         name varchar(255) not null,
         description text not null,
-        price decimal(10, 2) not null,
-        created_at timestamp default current_timestamp
+        price decimal(10, 2) not null
     );""")
 
     op.execute("""create table if not exists cart (
         id serial primary key,
         user_id integer not null references users(id),
-        product_id integer not null references products(id),
-        quantity integer not null default 1,
-        created_at timestamp default current_timestamp
+        product_id integer not null references products(id)
         );""")
 
     op.execute("""create table if not exists orders (
         id serial primary key,
         user_id integer not null references users(id),
-        status varchar(255) not null,
-        created_at timestamp default current_timestamp
+        order_price decimal(10, 2) not null
     );""")
 
     op.execute("""create table if not exists order_items (
         id serial primary key,
         order_id integer not null references orders(id),
-        product_id integer not null references products(id),
-        quantity integer not null,
-        created_at timestamp default current_timestamp
+        product_id integer not null references products(id)
         );""")
 
     # Insert initial data
     op.execute("""
         INSERT INTO users (name,surname,email,password_hash,admin)
         VALUES ('Иван','Иванов','admin@shop.ru','$2b$12$cu3d0kFKys1MV05bjTlf2.9Xkr9J1Jw.1BJzbX5EOT9VBgK1gQ4QK',true),
-        ('Колыван','Васильев','user@shop.ru','$2b$12$0RKgMj9g0Lb2N.5vu8B0.ORF93awJOC/MnxkP0nT2NlF8VmYy5rSq',false)
+        ('Пётр','Васильев','user@shop.ru','$2b$12$0RKgMj9g0Lb2N.5vu8B0.ORF93awJOC/MnxkP0nT2NlF8VmYy5rSq',false)
     """)
 
     op.execute("""
@@ -86,5 +78,8 @@ def upgrade():
 
 
 def downgrade():
-    op.execute("DROP INDEX idx_users_username")
     op.execute("DROP TABLE users")
+    op.execute("DROP TABLE orders")
+    op.execute("DROP TABLE order_items")
+    op.execute("DROP TABLE cart")
+    op.execute("DROP TABLE products")
