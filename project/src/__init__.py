@@ -10,7 +10,7 @@ def run_migrations_with_env():
 
     dsn = os.getenv('DATABASE_URL')
     if dsn is not None:
-        alembic_cfg.set_main_option("sqlalchemy.url", dsn)
+        alembic_cfg.set_main_option("sqlalchemy.url", dsn.replace('+asyncpg', ''))
 
     # Run migrations
     command.upgrade(alembic_cfg, "head")

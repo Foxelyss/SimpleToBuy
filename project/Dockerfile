@@ -21,4 +21,4 @@ RUN addgroup --gid 1001 --system app && \
 RUN mkdir /code/data
 RUN chown -R app:app /code/data
 USER app:app
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "80"]
+CMD ["python", "app.py"]

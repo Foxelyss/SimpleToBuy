@@ -1,6 +1,7 @@
 import re
 import math
 from fastapi import Depends, FastAPI, HTTPException, status
+from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from sqlalchemy import text
 from models import *
 from database import get_session, init_models, engine, SessionDep
@@ -37,6 +38,21 @@ def validate_email(email: str | None):
 @app.get("/api/health")
 def health_check():
     return {"status": "healthy"}
+
+@app.post("/login_oauth")
+async def login_oauth(new_user: Annotated[OAuth2PasswordRequestForm, Depends()], session: SessionDep):
+    user = await query_user(new_user.username, session)
+
+    if not user or not verify_password(new_user.password, user.password_hash):
+        raise HTTPException(status_code=401, detail={
+            "password": "Login failed"
+        })
+
+    access_token = create_access_token(data={"sub": user.id})
+
+    await session.execute(text("insert into sessions (user_id, token) values (:user_id, :token) returning token"), {"user_id": user.id, "token": access_token})
+    await session.commit()
+    return {"message": "Logged in successfully", "access_token": access_token}
 
 
 # Module 1
