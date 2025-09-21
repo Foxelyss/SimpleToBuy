@@ -29,7 +29,7 @@
             "name": "res.body.status",
             "value": "eq healthy",
             "enabled": true,
-            "uid": "iPVGaMbpCy9oX0nu24MbJ"
+            "uid": "uBwg0zwG3svtZQ00X1RKW"
           }
         ],
         "tests": "",
@@ -90,7 +90,7 @@
           "type": "http",
           "name": "Login as Admin",
           "filename": "Login as Admin.bru",
-          "seq": 5,
+          "seq": 6,
           "settings": {
             "encodeUrl": true
           },
@@ -121,7 +121,7 @@
               "file": []
             },
             "script": {
-              "res": "bru.setVar(\"access_token\",res.body.access_token)"
+              "res": "bru.setVar(\"access_token\", res.body.user_token)"
             },
             "vars": {},
             "assertions": [],
@@ -136,7 +136,7 @@
           "type": "http",
           "name": "Login as Regular",
           "filename": "Login as Regular.bru",
-          "seq": 4,
+          "seq": 5,
           "settings": {
             "encodeUrl": true
           },
@@ -167,7 +167,7 @@
               "file": []
             },
             "script": {
-              "res": "bru.setVar(\"access_token\",res.body.access_token)"
+              "res": "bru.setVar(\"access_token\", res.body.user_token)"
             },
             "vars": {},
             "assertions": [],
@@ -215,7 +215,7 @@
           "type": "http",
           "name": "See profile",
           "filename": "See profile.bru",
-          "seq": 6,
+          "seq": 7,
           "settings": {
             "encodeUrl": true
           },
@@ -234,7 +234,7 @@
             "script": {},
             "vars": {},
             "assertions": [],
-            "tests": "",
+            "tests": "test(\"The response has all properties\", () => {\n    expect(res.body.user).to.be.an('object');\n    const responseJson = res.body.user;\n    \n    expect(responseJson.fio).to.be.a('string');\n    expect(responseJson.id).to.be.a('number');\n});\n",
             "docs": "",
             "auth": {
               "mode": "bearer",
@@ -265,13 +265,61 @@
               "multipartForm": [],
               "file": []
             },
-            "script": {},
+            "script": {
+              "res": "bru.setVar(\"access_token\", res.body.user_token)"
+            },
             "vars": {},
             "assertions": [],
             "tests": "",
             "docs": "",
             "auth": {
               "mode": "inherit"
+            }
+          }
+        },
+        {
+          "type": "http",
+          "name": "Login",
+          "filename": "Login.bru",
+          "seq": 4,
+          "settings": {
+            "encodeUrl": true
+          },
+          "tags": [],
+          "request": {
+            "url": "{{host}}/login",
+            "method": "POST",
+            "headers": [],
+            "params": [],
+            "body": {
+              "mode": "json",
+              "json": "{\n  \"email\": \"email\",\n  \"password\": \"password\"\n}",
+              "formUrlEncoded": [],
+              "multipartForm": [
+                {
+                  "type": "text",
+                  "name": "username",
+                  "value": "admin@shop.ru",
+                  "enabled": true
+                },
+                {
+                  "type": "text",
+                  "name": "password",
+                  "value": "QWEasd123",
+                  "enabled": true
+                }
+              ],
+              "file": []
+            },
+            "script": {
+              "res": "bru.setVar(\"access_token\", res.body.user_token)"
+            },
+            "vars": {},
+            "assertions": [],
+            "tests": "",
+            "docs": "",
+            "auth": {
+              "mode": "none"
             }
           }
         }
@@ -539,7 +587,8 @@
               }
             ],
             "body": {
-              "mode": "none",
+              "mode": "json",
+              "json": "{\n \"price\":12 \n}",
               "formUrlEncoded": [],
               "multipartForm": [],
               "file": []
@@ -573,7 +622,7 @@
             "params": [],
             "body": {
               "mode": "json",
-              "json": "{\n  \"name\":\"asd\"\n}",
+              "json": "{\n  \"name\":\"asd\",\n  \"description\":\"asdasdasd\",\n  \"price\":12\n}",
               "formUrlEncoded": [],
               "multipartForm": [],
               "file": []
@@ -650,7 +699,7 @@
             "value": "http://127.0.0.1:8000",
             "enabled": true,
             "local": false,
-            "uid": "T4We6zBDyudJLkkk9DRaT"
+            "uid": "xnOp0BhjWaMZhIRWTAIRq"
           }
         ]
       }
@@ -664,7 +713,7 @@
       "node_modules",
       ".git"
     ],
-    "size": 0.0036458969116210938,
+    "size": 0.00405120849609375,
     "filesCount": 20
   }
 }
