@@ -109,7 +109,7 @@ async def register(new_user: UserSignup, session: SessionDep):
 
 @app.get("/profile")
 def get_profile(user: Annotated[User, Depends(get_current_user)], session: SessionDep):
-    return {"user": {"id": user.id, "fio": user.name + " " + user.surname + " " + (user.middle_name if user.middle_name is not None else ""), "avatar": user.avatar, "email": user.email}}
+    return {"user": {"id": user.id, "fio": user.name + " " + user.surname + (" " +user.middle_name if user.middle_name is not None else ""), "avatar": user.avatar, "email": user.email}}
 
 
 @app.get("/products")

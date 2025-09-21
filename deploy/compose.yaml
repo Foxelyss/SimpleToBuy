@@ -1,21 +1,24 @@
 services:
   simple-to-buy-api:
-    build: .
-    env_file:
-      - path: ./.env
-        required: false # default
-      - path: ./override.env
-        required: false
+    build: ../project
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://user:password@simple-to-buy-db:5432/simple_to_buy
     volumes:
       - misc_data:/code/data
+    ports:
+      - 8080:80
+    depends_on:
+      - simple-to-buy-db
   simple-to-buy-db:
     image: postgres:14.5
-    env_file:
-      - path: ./.env
-        required: false # default
-      - path: ./override.env
-        required: false
+    environment:
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=simple_to_buy
     volumes:
       - db_data:/var/lib/postgresql/data
+    expose:
+      - 5432
 volumes:
   misc_data:
+  db_data:

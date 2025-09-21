@@ -1,12 +1,17 @@
 from typing import Annotated
 
+import os
+
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.ext.asyncio import create_async_engine
 from sqlalchemy.orm import sessionmaker
 from fastapi import Depends
 
-DATABASE_URL = "postgresql+asyncpg://postgres:postgres@localhost/simpletobuy"
+DATABASE_URL = os.getenv('DATABASE_URL')
+
+if DATABASE_URL is None:
+    DATABASE_URL = "postgresql+asyncpg://postgres:postgres@localhost/simpletobuy"
 
 engine = create_async_engine(DATABASE_URL, echo=True)
 Base = declarative_base()
