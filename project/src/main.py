@@ -35,7 +35,7 @@ def validate_email(email: str | None):
 
     return True
 
-@app.get("/api/health")
+@app.get("/health")
 def health_check():
     return {"status": "healthy"}
 
@@ -44,9 +44,7 @@ async def login_oauth(new_user: Annotated[OAuth2PasswordRequestForm, Depends()],
     user = await query_user(new_user.username, session)
 
     if not user or not verify_password(new_user.password, user.password_hash):
-        raise HTTPException(status_code=401, detail={
-            "password": "Login failed"
-        })
+        raise HTTPException(status_code=401, detail="Login failed")
 
     access_token = create_access_token(data={"sub": user.id})
 
@@ -63,9 +61,7 @@ async def login(new_user: UserAuthorization, session: SessionDep):
     user = await query_user(new_user.email, session)
 
     if not user or not verify_password(new_user.password, user.password_hash):
-        raise HTTPException(status_code=401, detail={
-            "password": "Login failed"
-        })
+        return JSONResponse(status_code=401, content={"password": "Login failed"})
 
     access_token = create_access_token(data={"sub": user.id})
 
@@ -178,9 +174,9 @@ async def place_order(user: Annotated[User, Depends(get_current_user)], session:
         cart_items_quantity = (await session.execute(text("select count(product_id) as quantity from cart where user_id = :user_id"), {"user_id": user.id})).scalar()
 
         if cart_items_quantity <= 0:
-            raise HTTPException(status_code=400, detail={"message": "Cart is empty"})
+            return JSONResponse(status_code=400, content={"message": "Cart is empty"})
 
-        order_id = await session.execute(text("insert into orders (user_id, status, order_price) values (:user_id, 'pending', (select sum(price) from cart inner join products on cart.product_id = products.id where cart.user_id = :user_id)) returning id"), {"user_id": user.id})
+        order_id = await session.execute(text("insert into orders (user_id, order_price) values (:user_id, (select sum(price) from cart inner join products on cart.product_id = products.id where cart.user_id = :user_id)) returning id"), {"user_id": user.id})
         order_id = order_id.scalar_one()
         await session.commit()
 
@@ -200,10 +196,10 @@ async def update_profile(profile: ProfileUpdate, user: Annotated[User, Depends(g
         if profile.avatar is None and profile.email is None and profile.password is None and profile.fio is None:
             return JSONResponse(status_code=400, content={"message": "No input provided"})
 
-        if not validate_email(profile.email):
+        if profile.email is not None and not validate_email(profile.email):
             return generate_validation_error_for_fields("email")
 
-        if profile.password == "":
+        if profile.password is not None and profile.password == "":
             return generate_validation_error_for_fields("password")
 
         if profile.email is not None:
@@ -239,7 +235,7 @@ async def update_profile(profile: ProfileUpdate, user: Annotated[User, Depends(g
 @app.get("/order")
 async def get_order_history(user: Annotated[User, Depends(get_current_user)], session: SessionDep):
     try:
-        order_history = (await session.execute(text("select distinct id, (select array_agg(product_id) from order_items where order_id = orders.id), order_price as products from orders where user_id = :user_id"), {"user_id": user.id})).all()
+        order_history = (await session.execute(text("select distinct id, (select array_agg(product_id) from order_items where order_id = orders.id) as products, order_price  from orders where user_id = :user_id"), {"user_id": user.id})).all()
         return  [product._asdict() for product in order_history]
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

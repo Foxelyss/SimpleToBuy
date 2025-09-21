@@ -16,7 +16,13 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login_oauth")
 
 
 async def query_user(username, session: SessionDep):
-    return User(*(await session.execute(text("select * from users where email = :email"), {"email": username})).first())
+    response = await session.execute(text("select * from users where email = :email"), {"email": username})
+
+    user = response.first()
+    if not user:
+        return None
+
+    return User(*user)
 
 
 def verify_password(plain_password, hashed_password):
