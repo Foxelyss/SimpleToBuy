@@ -4,40 +4,38 @@ from fastapi import Depends, FastAPI, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from sqlalchemy import text
 from models import *
-from database import get_session, init_models, engine, SessionDep
+from database import get_session, engine, SessionDep
 from authorization import oauth2_scheme, get_current_user, query_user, verify_password, get_password_hash, create_access_token
 from fastapi.responses import JSONResponse
+import email_validator
+
 app = FastAPI()
-
-
-@app.on_event("startup")
-async def on_startup():
-    await init_models()
-
-
-@app.on_event("shutdown")
-async def on_shutdown():
-    await engine.dispose()
 
 forbidden = JSONResponse(status_code=403, content={"message": "Forbidden for you"})
 
+
 def generate_validation_error_for_fields(*fields: str):
-    details = {"message": "Validation error",}
+    details = {"message": "Validation error", }
 
     for field in fields:
         details[field] = "Validation error"
 
     return JSONResponse(status_code=422, content=details)
 
-def validate_email(email: str | None):
-    if email is None or re.match(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$', email) is None:
+
+def is_email_valid(email: str | None):
+    try:
+        email_validator.validate_email(email)
+    except Exception as a:
         return False
 
     return True
 
+
 @app.get("/health")
 def health_check():
     return {"status": "healthy"}
+
 
 @app.post("/login_oauth")
 async def login_oauth(new_user: Annotated[OAuth2PasswordRequestForm, Depends()], session: SessionDep):
@@ -67,6 +65,7 @@ async def login(new_user: UserAuthorization, session: SessionDep):
 
     await session.execute(text("insert into sessions (user_id, token) values (:user_id, :token) returning token"), {"user_id": user.id, "token": access_token})
     await session.commit()
+
     return {"message": "Logged in successfully", "user_token": access_token}
 
 
@@ -80,7 +79,7 @@ async def logout(token: Annotated[str, Depends(oauth2_scheme)], session: Session
 @app.post("/signup")
 async def register(new_user: UserSignup, session: SessionDep):
     try:
-        if not validate_email(new_user.email):
+        if not is_email_valid(new_user.email):
             return generate_validation_error_for_fields("email")
 
         if new_user.password == "":
@@ -115,13 +114,12 @@ async def register(new_user: UserSignup, session: SessionDep):
         await session.rollback()
         raise HTTPException(status_code=500, detail=str(e))
 
-
     return {"message": "Registered successfully", "user_token": access_token}
 
 
 @app.get("/profile")
 def get_profile(user: Annotated[User, Depends(get_current_user)], session: SessionDep):
-    return {"user": {"id": user.id, "fio": user.name + " " + user.surname + (" " +user.middle_name if user.middle_name is not None else ""), "avatar": user.avatar, "email": user.email}}
+    return {"user": {"id": user.id, "fio": user.name + " " + user.surname + (" " + user.middle_name if user.middle_name is not None else ""), "avatar": user.avatar, "email": user.email}}
 
 
 @app.get("/products")
@@ -141,6 +139,7 @@ async def add_to_cart(product_id: int, user: Annotated[User, Depends(get_current
     except Exception as e:
         await session.rollback()
         raise HTTPException(status_code=500, detail=str(e))
+
     return {"message": "Added to cart successfully"}
 
 
@@ -162,7 +161,10 @@ async def remove_from_cart(cart_id: int, user: Annotated[User, Depends(get_curre
 @app.get("/cart")
 async def get_cart(user: Annotated[User, Depends(get_current_user)], session: SessionDep):
     try:
-        cart_items = (await session.execute(text("select cart.id, cart.product_id, products.name, products.description, products.price from cart inner join products on cart.product_id = products.id where cart.user_id = :user_id"), {"user_id": user.id})).all()
+        cart_items = (await session.execute(text(
+            "select cart.id, cart.product_id, products.name, products.description, products.price from cart "
+            "inner join products on cart.product_id = products.id where cart.user_id = :user_id"), {"user_id": user.id})).all()
+
         return [item._asdict() for item in cart_items]
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -176,17 +178,22 @@ async def place_order(user: Annotated[User, Depends(get_current_user)], session:
         if cart_items_quantity <= 0:
             return JSONResponse(status_code=400, content={"message": "Cart is empty"})
 
-        order_id = await session.execute(text("insert into orders (user_id, order_price) values (:user_id, (select sum(price) from cart inner join products on cart.product_id = products.id where cart.user_id = :user_id)) returning id"), {"user_id": user.id})
+        order_id = await session.execute(text(
+            "insert into orders (user_id, order_price) values "
+            "(:user_id, (select sum(price) from cart inner join products on cart.product_id = products.id where cart.user_id = :user_id)) returning id"),
+            {"user_id": user.id})
         order_id = order_id.scalar_one()
         await session.commit()
 
-        await session.execute(text("insert into order_items (order_id, product_id) select :order_id, product_id from cart where user_id = :user_id"),{"order_id": order_id, "user_id": user.id})
+        await session.execute(text("insert into order_items (order_id, product_id) select :order_id, product_id from cart where user_id = :user_id"),
+                              {"order_id": order_id, "user_id": user.id})
         await session.execute(text("delete from cart where user_id = :user_id"), {"user_id": user.id})
 
         await session.commit()
     except Exception as e:
         await session.rollback()
         raise HTTPException(status_code=500, detail=str(e))
+
     return {"message": "Order placed successfully"}
 
 
@@ -196,7 +203,7 @@ async def update_profile(profile: ProfileUpdate, user: Annotated[User, Depends(g
         if profile.avatar is None and profile.email is None and profile.password is None and profile.fio is None:
             return JSONResponse(status_code=400, content={"message": "No input provided"})
 
-        if profile.email is not None and not validate_email(profile.email):
+        if profile.email is not None and not is_email_valid(profile.email):
             return generate_validation_error_for_fields("email")
 
         if profile.password is not None and profile.password == "":
@@ -235,8 +242,11 @@ async def update_profile(profile: ProfileUpdate, user: Annotated[User, Depends(g
 @app.get("/order")
 async def get_order_history(user: Annotated[User, Depends(get_current_user)], session: SessionDep):
     try:
-        order_history = (await session.execute(text("select distinct id, (select array_agg(product_id) from order_items where order_id = orders.id) as products, order_price  from orders where user_id = :user_id"), {"user_id": user.id})).all()
-        return  [product._asdict() for product in order_history]
+        order_history = (await session.execute(
+            text("select distinct id, (select array_agg(product_id) from order_items where order_id = orders.id) as products, order_price from orders where user_id = :user_id"),
+            {"user_id": user.id})).all()
+
+        return [product._asdict() for product in order_history]
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -260,6 +270,7 @@ async def create_product(product: Product, user: Annotated[User, Depends(get_cur
     except Exception as e:
         await session.rollback()
         raise HTTPException(status_code=500, detail=str(e))
+
     return {"message": "Product created successfully", "id": product_id}
 
 
@@ -274,6 +285,7 @@ async def delete_product(product_id: int, user: Annotated[User, Depends(get_curr
     except Exception as e:
         await session.rollback()
         raise HTTPException(status_code=500, detail=str(e))
+
     return {"message": "Product deleted successfully"}
 
 
