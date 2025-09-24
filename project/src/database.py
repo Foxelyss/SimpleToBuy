@@ -1,4 +1,4 @@
-from typing import Annotated
+from typing import Annotated, TypeAlias
 
 import os
 
@@ -23,8 +23,4 @@ async def get_session() -> AsyncSession:
         yield session
 
 
-async def create_db_and_tables():
-    await init_models()
-
-
-SessionDep = Annotated[AsyncSession, Depends(get_session)]
+SessionDep: TypeAlias = Annotated[AsyncSession, Depends(get_session)]

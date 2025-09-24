@@ -1,5 +1,5 @@
 import datetime
-from typing import Annotated, Optional
+from typing import Annotated, Optional, TypeAlias
 from secrets import token_hex
 
 from passlib.context import CryptContext
@@ -60,3 +60,5 @@ async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)], sessio
     user = User(*user)
 
     return user
+
+UserDep: TypeAlias = Annotated[User, Depends(get_current_user)]

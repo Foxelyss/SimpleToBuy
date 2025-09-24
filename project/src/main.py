@@ -1,11 +1,10 @@
-import re
 import math
-from fastapi import Depends, FastAPI, HTTPException, status
-from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from fastapi import Depends, FastAPI, HTTPException
+from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy import text
 from models import *
-from database import get_session, engine, SessionDep
-from authorization import oauth2_scheme, get_current_user, query_user, verify_password, get_password_hash, create_access_token
+from database import SessionDep
+from authorization import oauth2_scheme, query_user, verify_password, get_password_hash, create_access_token, UserDep
 from fastapi.responses import JSONResponse
 import email_validator
 
@@ -118,7 +117,7 @@ async def register(new_user: UserSignup, session: SessionDep):
 
 
 @app.get("/profile")
-def get_profile(user: Annotated[User, Depends(get_current_user)], session: SessionDep):
+def get_profile(user: UserDep, session: SessionDep):
     return {"user": {"id": user.id, "fio": user.name + " " + user.surname + (" " + user.middle_name if user.middle_name is not None else ""), "avatar": user.avatar, "email": user.email}}
 
 
@@ -132,7 +131,7 @@ async def get_products(session: SessionDep):
 
 
 @app.post("/cart/{product_id}")
-async def add_to_cart(product_id: int, user: Annotated[User, Depends(get_current_user)], session: SessionDep):
+async def add_to_cart(product_id: int, user: UserDep, session: SessionDep):
     try:
         await session.execute(text("insert into cart (user_id, product_id) values (:user_id, :product_id)"), {"user_id": user.id, "product_id": product_id})
         await session.commit()
@@ -144,7 +143,7 @@ async def add_to_cart(product_id: int, user: Annotated[User, Depends(get_current
 
 
 @app.delete("/cart/{cart_id}")
-async def remove_from_cart(cart_id: int, user: Annotated[User, Depends(get_current_user)], session: SessionDep):
+async def remove_from_cart(cart_id: int, user: UserDep, session: SessionDep):
     try:
         rows_affected = await session.execute(text("delete from cart where user_id = :user_id and id = :id"), {"user_id": user.id, "id": cart_id})
         await session.commit()
@@ -159,7 +158,7 @@ async def remove_from_cart(cart_id: int, user: Annotated[User, Depends(get_curre
 
 
 @app.get("/cart")
-async def get_cart(user: Annotated[User, Depends(get_current_user)], session: SessionDep):
+async def get_cart(user: UserDep, session: SessionDep):
     try:
         cart_items = (await session.execute(text(
             "select cart.id, cart.product_id, products.name, products.description, products.price from cart "
@@ -171,7 +170,7 @@ async def get_cart(user: Annotated[User, Depends(get_current_user)], session: Se
 
 
 @app.post("/order")
-async def place_order(user: Annotated[User, Depends(get_current_user)], session: SessionDep):
+async def place_order(user: UserDep, session: SessionDep):
     try:
         cart_items_quantity = (await session.execute(text("select count(product_id) as quantity from cart where user_id = :user_id"), {"user_id": user.id})).scalar()
 
@@ -198,7 +197,7 @@ async def place_order(user: Annotated[User, Depends(get_current_user)], session:
 
 
 @app.patch("/profile")
-async def update_profile(profile: ProfileUpdate, user: Annotated[User, Depends(get_current_user)], session: SessionDep):
+async def update_profile(profile: ProfileUpdate, user: UserDep, session: SessionDep):
     try:
         if profile.avatar is None and profile.email is None and profile.password is None and profile.fio is None:
             return JSONResponse(status_code=400, content={"message": "No input provided"})
@@ -240,7 +239,7 @@ async def update_profile(profile: ProfileUpdate, user: Annotated[User, Depends(g
 
 
 @app.get("/order")
-async def get_order_history(user: Annotated[User, Depends(get_current_user)], session: SessionDep):
+async def get_order_history(user: UserDep, session: SessionDep):
     try:
         order_history = (await session.execute(
             text("select distinct id, (select array_agg(product_id) from order_items where order_id = orders.id) as products, order_price from orders where user_id = :user_id"),
@@ -254,7 +253,7 @@ async def get_order_history(user: Annotated[User, Depends(get_current_user)], se
 # Module 3
 
 @app.post("/product")
-async def create_product(product: Product, user: Annotated[User, Depends(get_current_user)], session: SessionDep):
+async def create_product(product: Product, user: UserDep, session: SessionDep):
     if not user.is_admin:
         return forbidden
 
@@ -275,7 +274,7 @@ async def create_product(product: Product, user: Annotated[User, Depends(get_cur
 
 
 @app.delete("/product/{product_id}")
-async def delete_product(product_id: int, user: Annotated[User, Depends(get_current_user)], session: SessionDep):
+async def delete_product(product_id: int, user: UserDep, session: SessionDep):
     if not user.is_admin:
         return forbidden
 
@@ -290,7 +289,7 @@ async def delete_product(product_id: int, user: Annotated[User, Depends(get_curr
 
 
 @app.patch("/product/{product_id}")
-async def update_product(product_id: int, product: ProductUpdate, user: Annotated[User, Depends(get_current_user)], session: SessionDep):
+async def update_product(product_id: int, product: ProductUpdate, user: UserDep, session: SessionDep):
     if not user.is_admin:
         return forbidden
 
