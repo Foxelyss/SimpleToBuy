@@ -1,588 +1,548 @@
 {
-  "info": {
-    "name": "SimpleToBuy",
-    "description": "",
-    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
-  },
-  "item": [
-    {
-      "name": "Health check",
-      "event": [],
-      "request": {
-        "method": "GET",
-        "header": [],
-        "auth": {
-          "type": "noauth"
-        },
-        "description": "",
-        "url": {
-          "raw": "{{host}}/api/health",
-          "protocol": "",
-          "host": [
-            "{{host}}"
-          ],
-          "path": [
-            "api",
-            "health"
-          ],
-          "query": [],
-          "variable": []
-        }
-      }
-    },
-    {
-      "name": "Module 1",
-      "item": [
-        {
-          "name": "List products",
-          "event": [],
-          "request": {
-            "method": "GET",
-            "header": [],
-            "auth": {
-              "type": "noauth"
-            },
-            "description": "",
-            "url": {
-              "raw": "{{host}}/products",
-              "protocol": "",
-              "host": [
-                "{{host}}"
-              ],
-              "path": [
-                "products"
-              ],
-              "query": [],
-              "variable": []
-            }
-          }
-        },
-        {
-          "name": "Login as Admin",
-          "event": [],
-          "request": {
-            "method": "POST",
-            "header": [],
-            "auth": {
-              "type": "noauth"
-            },
-            "description": "",
-            "url": {
-              "raw": "{{host}}/login",
-              "protocol": "",
-              "host": [
-                "{{host}}"
-              ],
-              "path": [
-                "login"
-              ],
-              "query": [],
-              "variable": []
-            },
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"email\": \"admin@shop.ru\",\n  \"password\": \"QWEasd123\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            }
-          }
-        },
-        {
-          "name": "Login as Regular",
-          "event": [],
-          "request": {
-            "method": "POST",
-            "header": [],
-            "auth": {
-              "type": "noauth"
-            },
-            "description": "",
-            "url": {
-              "raw": "{{host}}/login",
-              "protocol": "",
-              "host": [
-                "{{host}}"
-              ],
-              "path": [
-                "login"
-              ],
-              "query": [],
-              "variable": []
-            },
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"email\": \"user@shop.ru\",\n  \"password\": \"password\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            }
-          }
-        },
-        {
-          "name": "Logout",
-          "event": [],
-          "request": {
-            "method": "POST",
-            "header": [],
-            "auth": {
-              "type": "bearer",
-              "bearer": {
-                "key": "token",
-                "value": "{{access_token}}",
-                "type": "string"
-              }
-            },
-            "description": "",
-            "url": {
-              "raw": "{{host}}/logout",
-              "protocol": "",
-              "host": [
-                "{{host}}"
-              ],
-              "path": [
-                "logout"
-              ],
-              "query": [],
-              "variable": []
-            }
-          }
-        },
-        {
-          "name": "See profile",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "test(\"The response has all properties\", () => {",
-                  "    expect(res.body.user).to.be.an('object');",
-                  "    const responseJson = res.body.user;",
-                  "    ",
-                  "    expect(responseJson.fio).to.be.a('string');",
-                  "    expect(responseJson.id).to.be.a('number');",
-                  "});",
-                  ""
-                ]
-              }
-            }
-          ],
-          "request": {
-            "method": "GET",
-            "header": [],
-            "auth": {
-              "type": "bearer",
-              "bearer": {
-                "key": "token",
-                "value": "{{access_token}}",
-                "type": "string"
-              }
-            },
-            "description": "",
-            "url": {
-              "raw": "{{host}}/profile",
-              "protocol": "",
-              "host": [
-                "{{host}}"
-              ],
-              "path": [
-                "profile"
-              ],
-              "query": [],
-              "variable": []
-            }
-          }
-        },
-        {
-          "name": "Signup",
-          "event": [],
-          "request": {
-            "method": "POST",
-            "header": [],
-            "auth": {
-              "type": "noauth"
-            },
-            "description": "",
-            "url": {
-              "raw": "{{host}}/signup",
-              "protocol": "",
-              "host": [
-                "{{host}}"
-              ],
-              "path": [
-                "signup"
-              ],
-              "query": [],
-              "variable": []
-            },
-            "body": {
-              "mode": "raw",
-              "raw": "{\n\"fio\": \"Иванов Иван Иванович\",\n\"email\": \"admin@admin.ru\",\n\"password\": \"admin\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            }
-          }
-        },
-        {
-          "name": "Login",
-          "event": [],
-          "request": {
-            "method": "POST",
-            "header": [],
-            "auth": {
-              "type": "noauth"
-            },
-            "description": "",
-            "url": {
-              "raw": "{{host}}/login",
-              "protocol": "",
-              "host": [
-                "{{host}}"
-              ],
-              "path": [
-                "login"
-              ],
-              "query": [],
-              "variable": []
-            },
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"email\": \"email\",\n  \"password\": \"password\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            }
-          }
-        }
-      ]
-    },
-    {
-      "name": "Module 2",
-      "item": [
-        {
-          "name": "Add to cart",
-          "event": [],
-          "request": {
-            "method": "POST",
-            "header": [],
-            "auth": {
-              "type": "bearer",
-              "bearer": {
-                "key": "token",
-                "value": "{{access_token}}",
-                "type": "string"
-              }
-            },
-            "description": "",
-            "url": {
-              "raw": "{{host}}/cart/:product_id",
-              "protocol": "",
-              "host": [
-                "{{host}}"
-              ],
-              "path": [
-                "cart",
-                ":product_id"
-              ],
-              "query": [],
-              "variable": [
-                {
-                  "key": "product_id",
-                  "value": "1"
-                }
-              ]
-            }
-          }
-        },
-        {
-          "name": "Get cart items",
-          "event": [],
-          "request": {
-            "method": "GET",
-            "header": [],
-            "auth": {
-              "type": "bearer",
-              "bearer": {
-                "key": "token",
-                "value": "{{access_token}}",
-                "type": "string"
-              }
-            },
-            "description": "",
-            "url": {
-              "raw": "{{host}}/cart",
-              "protocol": "",
-              "host": [
-                "{{host}}"
-              ],
-              "path": [
-                "cart"
-              ],
-              "query": [],
-              "variable": []
-            }
-          }
-        },
-        {
-          "name": "Order cart",
-          "event": [],
-          "request": {
-            "method": "POST",
-            "header": [],
-            "auth": {
-              "type": "noauth"
-            },
-            "description": "",
-            "url": {
-              "raw": "{{host}}/order",
-              "protocol": "",
-              "host": [
-                "{{host}}"
-              ],
-              "path": [
-                "order"
-              ],
-              "query": [],
-              "variable": []
-            }
-          }
-        },
-        {
-          "name": "Order history",
-          "event": [],
-          "request": {
-            "method": "GET",
-            "header": [],
-            "auth": {
-              "type": "noauth"
-            },
-            "description": "",
-            "url": {
-              "raw": "{{host}}/order",
-              "protocol": "",
-              "host": [
-                "{{host}}"
-              ],
-              "path": [
-                "order"
-              ],
-              "query": [],
-              "variable": []
-            }
-          }
-        },
-        {
-          "name": "Redacting profile",
-          "event": [],
-          "request": {
-            "method": "PATCH",
-            "header": [],
-            "auth": {
-              "type": "noauth"
-            },
-            "description": "",
-            "url": {
-              "raw": "{{host}}/profile",
-              "protocol": "",
-              "host": [
-                "{{host}}"
-              ],
-              "path": [
-                "profile"
-              ],
-              "query": [],
-              "variable": []
-            },
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"fio\":\"Asd\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            }
-          }
-        },
-        {
-          "name": "Remove from cart",
-          "event": [],
-          "request": {
-            "method": "DELETE",
-            "header": [],
-            "auth": {
-              "type": "bearer",
-              "bearer": {
-                "key": "token",
-                "value": "{{access_token}}",
-                "type": "string"
-              }
-            },
-            "description": "",
-            "url": {
-              "raw": "{{host}}/cart/:id",
-              "protocol": "",
-              "host": [
-                "{{host}}"
-              ],
-              "path": [
-                "cart",
-                ":id"
-              ],
-              "query": [],
-              "variable": [
-                {
-                  "key": "id",
-                  "value": "1"
-                }
-              ]
-            }
-          }
-        }
-      ]
-    },
-    {
-      "name": "Module 3",
-      "item": [
-        {
-          "name": "Change product",
-          "event": [],
-          "request": {
-            "method": "PATCH",
-            "header": [],
-            "auth": {
-              "type": "bearer",
-              "bearer": {
-                "key": "token",
-                "value": "{{access_token}}",
-                "type": "string"
-              }
-            },
-            "description": "",
-            "url": {
-              "raw": "{{host}}/product/:id",
-              "protocol": "",
-              "host": [
-                "{{host}}"
-              ],
-              "path": [
-                "product",
-                ":id"
-              ],
-              "query": [],
-              "variable": [
-                {
-                  "key": "id",
-                  "value": "12"
-                }
-              ]
-            },
-            "body": {
-              "mode": "raw",
-              "raw": "{\n \"price\":12 \n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            }
-          }
-        },
-        {
-          "name": "New product launch",
-          "event": [],
-          "request": {
-            "method": "POST",
-            "header": [],
-            "auth": {
-              "type": "bearer",
-              "bearer": {
-                "key": "token",
-                "value": "{{access_token}}",
-                "type": "string"
-              }
-            },
-            "description": "",
-            "url": {
-              "raw": "{{host}}/product",
-              "protocol": "",
-              "host": [
-                "{{host}}"
-              ],
-              "path": [
-                "product"
-              ],
-              "query": [],
-              "variable": []
-            },
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"name\":\"asd\",\n  \"description\":\"asdasdasd\",\n  \"price\":12\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            }
-          }
-        },
-        {
-          "name": "Remove product",
-          "event": [],
-          "request": {
-            "method": "DELETE",
-            "header": [],
-            "auth": {
-              "type": "bearer",
-              "bearer": {
-                "key": "token",
-                "value": "{{access_token}}",
-                "type": "string"
-              }
-            },
-            "description": "",
-            "url": {
-              "raw": "{{host}}/product/:id",
-              "protocol": "",
-              "host": [
-                "{{host}}"
-              ],
-              "path": [
-                "product",
-                ":id"
-              ],
-              "query": [],
-              "variable": [
-                {
-                  "key": "id",
-                  "value": "12"
-                }
-              ]
-            }
-          }
-        }
-      ]
-    }
-  ],
-  "variable": [
-    {
-      "key": "host",
-      "value": "",
-      "type": "default"
-    },
-    {
-      "key": "access_token",
-      "value": "",
-      "type": "default"
-    }
-  ]
+	"info": {
+		"_postman_id": "4850b884-78c9-486b-b1bc-9cccfad12ae6",
+		"name": "SimpleToBuy",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "48646963",
+		"_collection_link": "https://crimson-firefly-3641238.postman.co/workspace/123's-Workspace~f6aec87b-686f-4c6d-86ca-cfafc9ad324f/collection/48646963-4850b884-78c9-486b-b1bc-9cccfad12ae6?action=share&source=collection_link&creator=48646963"
+	},
+	"item": [
+		{
+			"name": "Module 1",
+			"item": [
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"pm.collectionVariables.set(\"user_token\", jsonData.user_token);",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"email\",\n  \"password\": \"password\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/login",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List products",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/products",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"products"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login as Admin",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"pm.collectionVariables.set(\"access_token\", jsonData.user_token);",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"admin@shop.ru\",\n  \"password\": \"QWEasd123\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/login",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login as Regular",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"pm.collectionVariables.set(\"user_token\", jsonData.user_token);",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"user@shop.ru\",\n  \"password\": \"password\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/login",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Logout",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/logout",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"logout"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "See profile",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"The response has all properties\", () => {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.be.an('object');",
+									"    const responseJson = jsonData.user;",
+									"    ",
+									"    pm.expect(responseJson.fio).to.be.a('string');",
+									"    pm.expect(responseJson.id).to.be.a('number');",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/profile",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"profile"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Signup",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"\"use strict\";",
+									"",
+									"let jsonData = pm.response.json();",
+									"",
+									"if (pm.response.status == 200){",
+									"pm.collectionVariables.set(\"user_token\", jsonData.user_token);",
+									"}",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\"fio\": \"Иванов Иван Иванович\",\n\"email\": \"admin@ya.ru\",\n\"password\": \"admin\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/signup",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"signup"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Module 2",
+			"item": [
+				{
+					"name": "Add to cart",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/cart/:product_id",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"cart",
+								":product_id"
+							],
+							"variable": [
+								{
+									"key": "product_id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get cart items",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/cart",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"cart"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Order cart",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/order",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"order"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Order history",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/order",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"order"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Redacting profile",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"fio\":\"Asd\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/profile",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"profile"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Remove from cart",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/cart/:id",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"cart",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Module 3",
+			"item": [
+				{
+					"name": "Change product",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n \"price\":12 \n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/product/:id",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"product",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "New product launch",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\":\"asd\",\n  \"description\":\"asdasdasd\",\n  \"price\":12\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/product",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"product"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Remove product",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/product/:id",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"product",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "12"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Health check",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{host}}/api/health",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"health"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{access_token}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "host",
+			"value": ""
+		},
+		{
+			"key": "access_token",
+			"value": ""
+		}
+	]
 }
