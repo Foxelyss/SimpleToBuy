@@ -31,7 +31,7 @@ def is_email_valid(email: str | None):
     return True
 
 
-@app.get("/health")
+@app.get("/api/health")
 def health_check():
     return {"status": "healthy"}
 
